@@ -15,19 +15,17 @@ app.use(express.json());
 
 // Programar el cron job para ejecutar cada segundo
 const job = schedule.scheduleJob('*/2 * * * *', () => {
-    const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz']
+    const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz'];
     console.log('Croneado pa');
-
     endpoints.forEach(endpoint => {
-        fetchData(endpoint)
-            .then((data) => {
-                fetchWithRetry(endpoint)
-                console.log(`Datos de ${endpoint}:`, data);
-            })
-            .catch((error) => {
-                console.error(`Error al obtener los datos:`, error);
-            });
+      fetchWithRetry(endpoint)
+        .then((data) => {
+          console.log(`Datos OK`);
+        })
+        .catch((error) => {
+          console.error(`Error al obtener los datos:`, error);
+        });
     });
-});
+  });
 
 module.exports = app;

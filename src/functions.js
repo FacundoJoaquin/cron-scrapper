@@ -8,7 +8,6 @@ const fetchWithRetry = async (endpoint, attempts = 0) => {
   try {
     const data = await fetchData(endpoint);
     writeToFirebase(data, endpoint);
-    console.log(`Datos de ${endpoint}:`, data);
   } catch (error) {
     if (attempts < MAX_ATTEMPTS - 1) {
       console.error(`Error al obtener los datos de ${endpoint}. Intento ${attempts + 1} de ${MAX_ATTEMPTS}.`);
