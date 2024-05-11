@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 const https = require('https');
 const firebase = require('firebase/app');
 const { getFirestore, collection, addDoc, serverTimestamp } = require('firebase/firestore');
-const { fetchData, writeToFirebase, fetchWithRetry } = require('./functions');
+const { fetchData, writeToFirebase, fetchWithRetry, deleteCollection } = require('./functions');
 require('dotenv').config();
 
 
@@ -13,10 +13,17 @@ app.use(cors());
 app.use(express.json());
 
 
-// Programar el cron job para ejecutar cada segundo
-const job = schedule.scheduleJob('*/2 * * * *', () => {
+const jobDelete = schedule.scheduleJob('58 4 * * *', () => {
+  try {
+  deleteCollection();
+    console.log('Coleccion borrada con éxito')
+  } catch (error) {
+    console.error('Error: ' + error)
+  }
+});
+
+const job = schedule.scheduleJob('0 5 * * *', () => {
     const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz'];
-    console.log('Croneado pa');
     endpoints.forEach(endpoint => {
       fetchWithRetry(endpoint)
         .then((data) => {
