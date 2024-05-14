@@ -16,9 +16,39 @@ app.get('/wakeUp', (req, res) => {
   res.json({response: 'Api is working.'});
 });
 
+function logUTCTime() {
+  const now = new Date();
+  const utcTime = now.toUTCString();
+  console.log(`Hora UTC actual: ${utcTime}`);
+}
+
+const job = schedule.scheduleJob('0 */18 * * *', () => {
+  try {
+    deleteCollection();
+    console.log('Colección borrada con éxito');
+  } catch (error) {
+    console.error('Error: ' + error);
+  }
+
+  setTimeout(() => {
+    const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz'];
+    endpoints.forEach(endpoint => {
+      fetchWithRetry(endpoint)
+        .then((data) => {
+          console.log(`Datos OK`);
+        })
+        .catch((error) => {
+          console.error(`Error al obtener los datos:`, error);
+        });
+    });
+  }, 60000); // 1 minuto = 60000 milisegundos
+});
+
+
 const serverWakeUp = schedule.scheduleJob('*/14 * * * *', async () => {
   try {
     const res = await fetchWakeUpServer();
+    logUTCTime();
     console.log(res)
   } catch (error) {
     console.error('Error: ' + error)
@@ -26,7 +56,7 @@ const serverWakeUp = schedule.scheduleJob('*/14 * * * *', async () => {
 });
 
 
-const jobDelete = schedule.scheduleJob('18 18 * * *', () => {
+/* const jobDelete = schedule.scheduleJob('18 18 * * *', () => {
   try {
   deleteCollection();
     console.log('Coleccion borrada con éxito')
@@ -47,5 +77,5 @@ const job = schedule.scheduleJob('20 18 * * *', () => {
         });
     });
   });
-
+ */
 module.exports = app;
