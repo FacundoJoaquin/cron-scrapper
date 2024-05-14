@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 const https = require('https');
 const firebase = require('firebase/app');
 const { getFirestore, collection, addDoc, serverTimestamp } = require('firebase/firestore');
-const { fetchData, writeToFirebase, fetchWithRetry, deleteCollection } = require('./functions');
+const { fetchData, writeToFirebase, fetchWithRetry, deleteCollection, fetchWakeUpServer } = require('./functions');
 require('dotenv').config();
 
 
@@ -16,8 +16,17 @@ app.get('/wakeUp', (req, res) => {
   res.json({response: 'Api is working.'});
 });
 
+const serverWakeUp = schedule.scheduleJob('*/14 * * * *', async () => {
+  try {
+    const res = await fetchWakeUpServer();
+    console.log(res)
+  } catch (error) {
+    console.error('Error: ' + error)
+  }
+});
 
-const jobDelete = schedule.scheduleJob('03 20 * * *', () => {
+
+const jobDelete = schedule.scheduleJob('44 09 * * *', () => {
   try {
   deleteCollection();
     console.log('Coleccion borrada con éxito')
@@ -26,7 +35,7 @@ const jobDelete = schedule.scheduleJob('03 20 * * *', () => {
   }
 });
 
-const job = schedule.scheduleJob('04 20 * * *', () => {
+const job = schedule.scheduleJob('46 09 * * *', () => {
     const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz'];
     endpoints.forEach(endpoint => {
       fetchWithRetry(endpoint)

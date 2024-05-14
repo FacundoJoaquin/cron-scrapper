@@ -103,9 +103,38 @@ const deleteCollection = async () => {
   }
 };
 
+const fetchWakeUpServer = () => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'cron-scrapper.onrender.com',
+      port: 443,
+      path: '/wakeUp',
+      method: 'GET',
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        resolve(data);
+      });
+    });
+
+    req.on('error', (error) => {
+      reject(error);
+    });
+
+    req.end();
+  });
+};
+
+
 module.exports = {
   fetchData,
   writeToFirebase,
   fetchWithRetry,
-  deleteCollection
+  deleteCollection,
+  fetchWakeUpServer
 };
