@@ -12,8 +12,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/wakeUp', (req, res) => {
+  res.json({response: 'Api is working.'});
+});
 
-const jobDelete = schedule.scheduleJob('58 4 * * *', () => {
+
+const jobDelete = schedule.scheduleJob('03 20 * * *', () => {
   try {
   deleteCollection();
     console.log('Coleccion borrada con éxito')
@@ -22,7 +26,7 @@ const jobDelete = schedule.scheduleJob('58 4 * * *', () => {
   }
 });
 
-const job = schedule.scheduleJob('0 5 * * *', () => {
+const job = schedule.scheduleJob('04 20 * * *', () => {
     const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz'];
     endpoints.forEach(endpoint => {
       fetchWithRetry(endpoint)
