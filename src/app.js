@@ -26,7 +26,7 @@ const serverWakeUp = schedule.scheduleJob('*/14 * * * *', async () => {
 });
 
 
-const jobDelete = schedule.scheduleJob('44 09 * * *', () => {
+const jobDelete = schedule.scheduleJob('18 18 * * *', () => {
   try {
   deleteCollection();
     console.log('Coleccion borrada con éxito')
@@ -35,7 +35,7 @@ const jobDelete = schedule.scheduleJob('44 09 * * *', () => {
   }
 });
 
-const job = schedule.scheduleJob('46 09 * * *', () => {
+const job = schedule.scheduleJob('20 18 * * *', () => {
     const endpoints = ['armando', 'arnoldi', 'bounos', 'mallemacci', 'salcovsky', 'surwal', 'zz'];
     endpoints.forEach(endpoint => {
       fetchWithRetry(endpoint)
