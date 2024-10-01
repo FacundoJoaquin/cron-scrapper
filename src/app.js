@@ -41,7 +41,7 @@ const job = schedule.scheduleJob('0 */18 * * *', () => {
           console.error(`Error al obtener los datos:`, error);
         });
     });
-  }, 60000); // 1 minuto = 60000 milisegundos
+  }, 45000); // 45 segundos = 45000 milisegundos
 });
 
 
