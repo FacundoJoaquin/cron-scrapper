@@ -1,0 +1,16 @@
+### Consulta de servicios suscriptos por el tenant consultante
+POST {{BASE_URL}}/delete-collection
+Content-Type: application/json
+
+### Escribir en firebase
+POST {{BASE_URL}}/test-firebase
+Content-Type: application/json
+
+### Escribir en firebase
+GET {{BASE_URL}}/trigger-data-collection
+Content-Type: application/json
+
+### Wake up server
+POST {{BASE_URL}}/trigger-wakeup
+Content-Type: application/json
+

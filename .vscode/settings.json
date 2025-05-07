@@ -1,0 +1,17 @@
+{
+    "rest-client.environmentVariables": {
+      "standalone": {
+        "BASE_URL": "http://localhost:4000"
+      },
+      "local": {
+        "BASE_URL": "http://localhost:8000/auth"
+      },
+      "staging": {
+        "BASE_URL": "https://krakend-staging.yellowcliff-3335fcd4.eastus.azurecontainerapps.io/auth"
+      },
+      "prod": {
+        "BASE_URL": "https://krakend-prod.yellowcliff-3335fcd4.eastus.azurecontainerapps.io/auth"
+      }
+    }
+  }
+  

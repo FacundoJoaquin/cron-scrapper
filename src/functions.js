@@ -12,26 +12,36 @@ const { db } = require("./firebaseConfig");
 const MAX_ATTEMPTS = 6;
 
 const fetchWithRetry = async (endpoint, attempts = 0) => {
-  try {
-    const data = await fetchData(endpoint);
-    writeToFirebase(data, endpoint);
-  } catch (error) {
-    if (attempts < MAX_ATTEMPTS - 1) {
-      console.error(
-        `Error al obtener los datos de ${endpoint}. Intento ${
-          attempts + 1
-        } de ${MAX_ATTEMPTS}.`
-      );
-      setTimeout(() => {
-        fetchWithRetry(endpoint, attempts + 1);
-      }, 5000); // Esperar 5 segundos antes de volver a intentar
-    } else {
-      console.error(
-        `Error al obtener los datos de ${endpoint} después de ${MAX_ATTEMPTS} intentos.`,
-        error
-      );
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = await fetchData(endpoint);
+      await writeToFirebase(data, endpoint);
+      resolve(data);
+    } catch (error) {
+      if (attempts < MAX_ATTEMPTS - 1) {
+        console.error(
+          `Error al obtener los datos de ${endpoint}. Intento ${
+            attempts + 1
+          } de ${MAX_ATTEMPTS}.`
+        );
+        // Wait 5 seconds before retrying
+        await new Promise(r => setTimeout(r, 5000));
+        try {
+          // Try again recursively
+          const result = await fetchWithRetry(endpoint, attempts + 1);
+          resolve(result);
+        } catch (retryError) {
+          reject(retryError);
+        }
+      } else {
+        console.error(
+          `Error al obtener los datos de ${endpoint} después de ${MAX_ATTEMPTS} intentos.`,
+          error
+        );
+        reject(error);
+      }
     }
-  }
+  });
 };
 
 const fetchData = (endpoint) => {
@@ -81,9 +91,9 @@ const writeToFirebase = async (data) => {
     });
 
     await Promise.all(promises);
-    console.log(`Datos guardados`);
+    console.log(`Successfully wrote ${data.length} items to Firebase`);
   } catch (error) {
-    console.error("Error al guardar datos en Firebase:", error);
+    console.error(`Error al guardar datos en Firebase:`, error);
   }
 };
 
@@ -91,15 +101,15 @@ const deleteCollection = async () => {
   try {
     const collectionRef = collection(db, 'alquileres');
     const querySnapshot = await getDocs(collectionRef);
-
+    
     const promises = querySnapshot.docs.map(async (doc) => {
       await deleteDoc(doc.ref);
     });
 
     await Promise.all(promises);
-    console.log(`Colección eliminada correctamente.`);
+    console.log(`Successfully deleted ${querySnapshot.docs.length} documents from collection`);
   } catch (error) {
-    console.error("Error al eliminar la colección:", error);
+    console.error(`Error al eliminar la colección:`, error);
   }
 };
 
@@ -123,6 +133,7 @@ const fetchWakeUpServer = () => {
     });
 
     req.on('error', (error) => {
+      console.error(`Error in wake-up request:`, error);
       reject(error);
     });
 
